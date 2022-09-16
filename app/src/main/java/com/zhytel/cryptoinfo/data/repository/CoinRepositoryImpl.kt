@@ -1,4 +1,4 @@
-package com.zhytel.cryptoinfo.data.database.repository
+package com.zhytel.cryptoinfo.data.repository
 
 import android.app.Application
 import androidx.lifecycle.LiveData
@@ -11,7 +11,7 @@ import com.zhytel.cryptoinfo.domain.entity.CoinInfo
 import kotlinx.coroutines.delay
 
 class CoinRepositoryImpl(
-    application: Application
+    private val application: Application
 ) : CoinRepository {
 
     private val coinInfoDto = AppDatabase.getInstance(application).coinPriceInfoDao()
@@ -34,12 +34,15 @@ class CoinRepositoryImpl(
 
     override suspend fun loadData() {
         while (true) {
-            val topCoins = apiService.getTopCoinsInfo(limit = 50)
-            val fSyms = mapper.mapNamesListToString(topCoins)
-            val jsonContainer = apiService.getFullPriceList(fSyms = fSyms)
-            val coinInfoDtoList = mapper.mapJSContainerToListCoinInfo(jsonContainer)
-            val dbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
-            coinInfoDto.insertPriceList(dbModelList)
+            try {
+                val topCoins = apiService.getTopCoinsInfo(limit = 50)
+                val fSyms = mapper.mapNamesListToString(topCoins)
+                val jsonContainer = apiService.getFullPriceList(fSyms = fSyms)
+                val coinInfoDtoList = mapper.mapJSContainerToListCoinInfo(jsonContainer)
+                val dbModelList = coinInfoDtoList.map { mapper.mapDtoToDbModel(it) }
+                coinInfoDto.insertPriceList(dbModelList)
+            } catch (e: Exception) {
+            }
             delay(1000)
         }
     }

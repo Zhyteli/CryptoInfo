@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "full_price_list")
 data class CoinInfoDbModel(
+    @PrimaryKey
     val fromSymbol: String,
     val toSymbol: String?,
     val price: String?,
