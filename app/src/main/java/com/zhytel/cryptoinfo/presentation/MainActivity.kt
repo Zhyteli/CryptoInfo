@@ -11,11 +11,12 @@ import com.zhytel.cryptoinfo.presentation.adapters.CoinInfoAdapter
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: CoinViewModel
-    private lateinit var binding: ActivityMainBinding
+    private val binding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val adapter = CoinInfoAdapter(this)
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
